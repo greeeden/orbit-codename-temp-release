@@ -1,221 +1,272 @@
 <!doctype html>
 <html lang="ru">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Orbit</title>
-<meta name="description" content="Портфель, карта рынка и новости в строке меню Mac. Приложение в разработке.">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Orbit</title>
+    <meta
+      name="description"
+      content="Портфель, карта рынка и новости в строке меню Mac. Приложение в разработке."
+    />
 
-<meta property="og:title" content="Orbit">
-<meta property="og:description" content="Портфель, карта рынка и новости в строке меню Mac.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://orbit-income.com/">
+    <meta property="og:title" content="Orbit" />
+    <meta
+      property="og:description"
+      content="Портфель, карта рынка и новости в строке меню Mac."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://orbit-income.com/" />
 
-<link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+      @font-face {
+        font-family: "Manrope";
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: url("fonts/manrope-400.woff2") format("woff2");
+      }
+      @font-face {
+        font-family: "Manrope";
+        font-style: normal;
+        font-weight: 500;
+        font-display: swap;
+        src: url("fonts/manrope-500.woff2") format("woff2");
+      }
 
-<style>
-  :root {
-    --ink:      #0a0a0b;
-    --gold:     #d9a441;
-    --gold-lit: #f6d292;
-    --text:     #f4f3f1;
-    --muted:    rgba(244, 243, 241, 0.52);
-    --faint:    rgba(244, 243, 241, 0.32);
-    --line:     rgba(244, 243, 241, 0.10);
-  }
+      :root {
+        --ink: #0a0a0b;
+        --gold: #d9a441;
+        --gold-lit: #f6d292;
+        --text: #f4f3f1;
+        --muted: rgba(244, 243, 241, 0.52);
+        --faint: rgba(244, 243, 241, 0.32);
+        --line: rgba(244, 243, 241, 0.1);
+      }
 
-  * { box-sizing: border-box; }
-  html, body { height: 100%; }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100%;
+      }
 
-  body {
-    margin: 0;
-    background: var(--ink);
-    color: var(--text);
-    font-family: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
-    font-size: 16px;
-    line-height: 1.5;
-    -webkit-font-smoothing: antialiased;
-    overflow-x: hidden;
-  }
+      body {
+        margin: 0;
+        background: var(--ink);
+        color: var(--text);
+        font-family:
+          "Manrope",
+          system-ui,
+          -apple-system,
+          sans-serif;
+        font-size: 16px;
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+        overflow-x: hidden;
+      }
 
-  /* Цвет только как свечение за орбитой — поле остаётся нейтральным. */
-  .glow {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    background:
-      radial-gradient(620px 460px at 50% 32%, rgba(217, 164, 65, 0.16), transparent 68%),
-      radial-gradient(900px 700px at 50% 30%, rgba(88, 84, 220, 0.10), transparent 72%),
-      radial-gradient(1500px 1100px at 50% 40%, transparent 42%, rgba(0, 0, 0, 0.70) 100%);
-  }
+      .glow {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background:
+          radial-gradient(
+            620px 460px at 50% 32%,
+            rgba(217, 164, 65, 0.16),
+            transparent 68%
+          ),
+          radial-gradient(
+            900px 700px at 50% 30%,
+            rgba(88, 84, 220, 0.1),
+            transparent 72%
+          ),
+          radial-gradient(
+            1500px 1100px at 50% 40%,
+            transparent 42%,
+            rgba(0, 0, 0, 0.7) 100%
+          );
+      }
 
-  /* Зерно по всему полю. Без режима наложения: на почти чёрном
-     overlay и soft-light не дают ничего видимого. */
-  .grain {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    opacity: 0.22;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='180' height='180' filter='url(%23n)'/></svg>");
-    background-size: 180px 180px;
-  }
+      .grain {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        opacity: 0.22;
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='180' height='180' filter='url(%23n)'/></svg>");
+        background-size: 180px 180px;
+      }
 
-  .wrap {
-    position: relative;
-    min-height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 0 24px 28px;
-  }
+      .wrap {
+        position: relative;
+        min-height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 0 24px 28px;
+      }
 
-  main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    max-width: 640px;
-    padding: 56px 0;
-  }
+      main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        max-width: 640px;
+        padding: 56px 0;
+      }
 
-  .orbit {
-    width: clamp(240px, 38vw, 350px);
-    height: auto;
-    display: block;
-    margin-bottom: clamp(26px, 5vw, 44px);
-  }
+      .orbit {
+        width: clamp(240px, 38vw, 350px);
+        height: auto;
+        display: block;
+        margin-bottom: clamp(26px, 5vw, 44px);
+      }
 
-  h1 {
-    margin: 0;
-    font-size: clamp(56px, 10vw, 104px);
-    font-weight: 700;
-    letter-spacing: -0.045em;
-    line-height: 0.95;
-  }
+      h1 {
+        margin: 0;
+        font-size: clamp(56px, 10vw, 104px);
+        font-weight: 400;
+        letter-spacing: -0.03em;
+        line-height: 0.95;
+      }
 
-  .lede {
-    margin: 20px 0 0;
-    max-width: 30ch;
-    font-size: clamp(17px, 2.4vw, 20px);
-    color: var(--muted);
-    letter-spacing: -0.005em;
-  }
+      .lede {
+        margin: 20px 0 0;
+        max-width: 30ch;
+        font-size: clamp(17px, 2.4vw, 20px);
+        color: var(--muted);
+        letter-spacing: -0.005em;
+      }
 
-  /* Статус, а не действие — поэтому обводка, а не заливка. */
-  .badge {
-    margin-top: 30px;
-    display: inline-flex;
-    align-items: center;
-    gap: 9px;
-    height: 36px;
-    padding: 0 16px;
-    border: 1px solid var(--line);
-    border-radius: 18px;
-    font-size: 13.5px;
-    font-weight: 500;
-    color: var(--muted);
-  }
+      .badge {
+        margin-top: 30px;
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        height: 36px;
+        padding: 0 16px;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        font-size: 13.5px;
+        font-weight: 500;
+        color: var(--muted);
+      }
 
-  .badge::before {
-    content: "";
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: var(--gold);
-    box-shadow: 0 0 10px rgba(217, 164, 65, 0.85);
-  }
+      .badge::before {
+        content: "";
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--gold);
+        box-shadow: 0 0 10px rgba(217, 164, 65, 0.85);
+      }
 
-  footer {
-    width: 100%;
-    max-width: 1000px;
-    padding-top: 20px;
-    border-top: 1px solid var(--line);
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px 20px;
-    justify-content: space-between;
-    font-size: 13.5px;
-    color: var(--faint);
-  }
+      footer {
+        width: 100%;
+        max-width: 1000px;
+        padding-top: 20px;
+        border-top: 1px solid var(--line);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 20px;
+        justify-content: space-between;
+        font-size: 13.5px;
+        color: var(--faint);
+      }
 
-  footer a {
-    color: var(--muted);
-    text-decoration: none;
-  }
+      footer a {
+        color: var(--muted);
+        text-decoration: none;
+      }
 
-  footer a:hover { color: var(--gold-lit); }
+      footer a:hover {
+        color: var(--gold-lit);
+      }
 
-  footer a:focus-visible {
-    outline: 2px solid var(--gold);
-    outline-offset: 3px;
-    border-radius: 3px;
-  }
-</style>
-</head>
+      footer a:focus-visible {
+        outline: 2px solid var(--gold);
+        outline-offset: 3px;
+        border-radius: 3px;
+      }
+    </style>
+  </head>
 
-<body>
-<div class="glow"></div>
-<div class="grain"></div>
+  <body>
+    <div class="glow"></div>
+    <div class="grain"></div>
 
-<div class="wrap">
-  <main>
-    <svg class="orbit" viewBox="0 0 420 420" role="img" aria-label="Орбита с движущейся точкой">
-      <defs>
-        <linearGradient id="ring" x1="0" y1="1" x2="1" y2="0">
-          <stop offset="0"    stop-color="#7a5420"/>
-          <stop offset="0.55" stop-color="#d9a441"/>
-          <stop offset="1"    stop-color="#f6d292"/>
-        </linearGradient>
-        <filter id="halo" x="-140%" y="-140%" width="380%" height="380%">
-          <feGaussianBlur stdDeviation="13" result="b"/>
-          <feMerge>
-            <feMergeNode in="b"/>
-            <feMergeNode in="SourceGraphic"/>
-          </feMerge>
-        </filter>
-      </defs>
+    <div class="wrap">
+      <main>
+        <svg
+          class="orbit"
+          viewBox="0 0 420 420"
+          role="img"
+          aria-label="Орбита с движущейся точкой"
+        >
+          <defs>
+            <linearGradient id="ring" x1="0" y1="1" x2="1" y2="0">
+              <stop offset="0" stop-color="#7a5420" />
+              <stop offset="0.55" stop-color="#d9a441" />
+              <stop offset="1" stop-color="#f6d292" />
+            </linearGradient>
+            <filter id="halo" x="-140%" y="-140%" width="380%" height="380%">
+              <feGaussianBlur stdDeviation="13" result="b" />
+              <feMerge>
+                <feMergeNode in="b" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
 
-      <g transform="rotate(-24 210 210)">
-        <ellipse cx="210" cy="210" rx="168" ry="96"
-                 fill="none" stroke="url(#ring)" stroke-width="3"/>
+          <g transform="rotate(-24 210 210)">
+            <ellipse
+              cx="210"
+              cy="210"
+              rx="168"
+              ry="96"
+              fill="none"
+              stroke="url(#ring)"
+              stroke-width="3"
+            />
 
-        <!-- Тот же эллипс, но путём: по нему движется точка. -->
-        <path id="track" fill="none" stroke="none"
-              d="M42,210 a168,96 0 1,0 336,0 a168,96 0 1,0 -336,0"/>
+            <path
+              id="track"
+              fill="none"
+              stroke="none"
+              d="M42,210 a168,96 0 1,0 336,0 a168,96 0 1,0 -336,0"
+            />
 
-        <circle r="14" fill="#f6d292" filter="url(#halo)">
-          <animateMotion dur="26s" repeatCount="indefinite">
-            <mpath href="#track"/>
-          </animateMotion>
-        </circle>
-      </g>
-    </svg>
+            <circle r="14" fill="#f6d292" filter="url(#halo)">
+              <animateMotion dur="26s" repeatCount="indefinite">
+                <mpath href="#track" />
+              </animateMotion>
+            </circle>
+          </g>
+        </svg>
 
-    <h1>Orbit</h1>
+        <h1>Orbit</h1>
 
-    <p class="lede">Портфель, рынок и новости</p>
+        <p class="lede">Портфель, рынок и новости</p>
 
-    <span class="badge">В разработке · первая версия для macOS</span>
-  </main>
+        <span class="badge"
+          >В разработке · первая версия сайта, macOS и iOS</span
+        >
+      </main>
 
-  <footer>
-    <span>Orbit · 2026</span>
-    <a href="mailto:leadergreed@gmail.com">leadergreed@gmail.com</a>
-  </footer>
-</div>
+      <footer>
+        <span>Orbit · 2026</span>
+        <a href="mailto:leadergreed@gmail.com">leadergreed@gmail.com</a>
+      </footer>
+    </div>
 
-<script>
-  // Единственная анимация на странице — и она уважает системную
-  // настройку «Уменьшение движения».
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    document.querySelector(".orbit").pauseAnimations();
-  }
-</script>
-</body>
+    <script>
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        document.querySelector(".orbit").pauseAnimations();
+      }
+    </script>
+  </body>
 </html>
